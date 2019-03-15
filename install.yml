@@ -1,0 +1,11 @@
+- hosts: all
+  become: yes
+
+  vars:
+    pip_install_packages:
+      - name: ansible
+        version: stable-2.7
+
+  roles:
+    - role: geerlingguy.repo-epel
+    - role: geerlingguy.pip
