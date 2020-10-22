@@ -3,19 +3,7 @@ name: build
 on: [deployment, push]
 
 jobs:
-  ansible-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Ansible lint
-        uses: ansible/ansible-lint-action@master
-        with:
-          targets: |
-            install.yml
-
-  molecule:
+  salt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,49 +13,8 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Install dependencies
+      - name: Install SaltStack 
         run: |
-          pip install -r molecule/requirements.txt
+          curl -L https://bootstrap.saltstack.com -o install_salt.sh
+          sudo sh install_salt.sh -P -M -x python3
 
-      - name: Create galaxy dependencies file in 'molecule/default/'
-        run: |
-          cp roles/requirements.yml molecule/default/requirements.yml
-
-      - name: Set latest AMI image id to environment variables
-        run: |
-          AMI_ID=$(aws ec2 describe-images \
-          --owners "${{ secrets.AMI_OWNER_ID }}" \
-          --filters "Name=name,Values=centos*" \
-          --query 'Images[*][CreationDate, ImageId, Name]' \
-          --output text | sort -r | awk 'NR==1 {print $2}')
-          echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-northeast-1
-
-      - name: Test with molecule
-        run: |
-          molecule test
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          EC2_REGION: ap-northeast-1
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
-
-  trailing-whitespace:
-    name: Find Trailing Whitespace
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: harupy/find-trailing-whitespace@56310d7
-
-  lintAllTheThings:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: yaml-lint
-        uses: ibiqlik/action-yamllint@665205c
-        with:
-          config_file: .yamllint
