@@ -16,5 +16,5 @@ jobs:
       - name: Install SaltStack
         run: |
           python3 -m pip install salt
-          salt-master -d
+          sudo salt-master -d
 
