@@ -13,8 +13,8 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Install SaltStack 
+      - name: Install SaltStack
         run: |
           python3 -m pip install salt
-          sudo salt-master
+          salt
 
