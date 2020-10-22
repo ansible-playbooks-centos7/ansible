@@ -15,8 +15,6 @@ jobs:
 
       - name: Install SaltStack 
         run: |
-          curl -L https://bootstrap.saltstack.com -o install_salt.sh
-          sudo sh install_salt.sh -P -M -x python3
-          sudo ufw allow salt
+          python3 -m pip install salt
           sudo salt-master
 
