@@ -4,6 +4,11 @@ yaml-files:
   - '*.yml'
   - '.yamllint'
 
+extends: default
+
+ignore: |
+  README.md
+
 rules:
   braces: disable
   brackets: enable
@@ -22,12 +27,7 @@ rules:
   indentation: enable
   key-duplicates: enable
   key-ordering: disable
-  line-length:
-    level: error
-    ignore: |
-       .github/workflows/build.yml
-       tests/create-cfn-stack.yml
-       tests/create-inventory.yml
+  line-length: disable
   new-line-at-end-of-file: enable
   new-lines: enable
   octal-values: disable
